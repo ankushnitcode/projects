@@ -12,6 +12,9 @@ type OperatorPlugin interface {
 }
 
 func main() {
+
+	// go run main.go add 5 2
+	//to test
 	if len(os.Args) < 4 {
 		fmt.Println("Usage: ./calculator [operator] [operand1] [operand2]")
 		os.Exit(1)
