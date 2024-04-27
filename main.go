@@ -1,9 +1,9 @@
 package main
 
 import (
-	"awesomeProject/Operators"
 	"fmt"
 	"os"
+	"plugin"
 	"strconv"
 )
 
@@ -12,11 +12,11 @@ type OperatorPlugin interface {
 }
 
 func main() {
-
-	// go run main.go add 5 2
+	// go run main.go addition 5 2
 	//to test
 	if len(os.Args) < 4 {
 		fmt.Println("Usage: ./calculator [operator] [operand1] [operand2]")
+		fmt.Println("operator can be : addition,division,subtract,multiply")
 		os.Exit(1)
 	}
 
@@ -43,17 +43,28 @@ func parseValues(s string) float64 {
 	return value
 }
 
-func GetOperator(operatorType string) OperatorPlugin {
-	switch operatorType {
-	case "add":
-		return Operators.AddPlugin{}
-	case "subtract":
-		return Operators.SubtractPlugin{}
-	case "multiply":
-		return Operators.MultiplyPlugin{}
-	case "divide":
-		return Operators.DividePlugin{}
-	default:
-		return nil
+func GetOperator(op string) OperatorPlugin {
+
+	var mod string = "./" + op + "/" + op + ".so"
+
+	plug, err := plugin.Open(mod)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
+
+	operatorX, err := plug.Lookup("Plugin")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	var operator OperatorPlugin
+	operator, ok := operatorX.(OperatorPlugin)
+	if !ok {
+		fmt.Println("unexpected type from module symbol")
+		os.Exit(1)
+	}
+	return operator
+
 }

@@ -1,4 +1,4 @@
-package Operators
+package main
 
 type DividePlugin struct{}
 
@@ -8,3 +8,5 @@ func (p DividePlugin) Operate(a, b float64) float64 {
 	}
 	return a / b
 }
+
+var Plugin DividePlugin
